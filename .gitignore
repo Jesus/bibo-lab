@@ -1,0 +1,12 @@
+# OS X files
+*.DS_Store
+._*
+
+# Windows files
+Thumbs.db
+
+# Media files
+*.jpg
+*.JPG
+*.mp4
+
