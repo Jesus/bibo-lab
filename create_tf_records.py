@@ -22,9 +22,9 @@ from collections import defaultdict
 from object_detection.utils import dataset_util
 from object_detection.utils import label_map_util
 
-config_label_map_path = "data_train/label_map.pbtxt"
+config_label_map_path = "model/label_map.pbtxt"
 config_train_dir = "data_train"
-config_output_dir = "data_tf"
+config_output_dir = "model"
 
 def create_tf_example(image_path, examples, label_map_dict):
     with tf.gfile.GFile(image_path, 'rb') as fid:
@@ -60,8 +60,8 @@ def create_tf_example(image_path, examples, label_map_dict):
         xmax.append(float(box["x"] + box["width"]))
         ymax.append(float(box["y"] + box["height"]))
         class_name = 'bib'
-        classes_text.append(class_name.encode('utf8'))
         classes.append(label_map_dict[class_name])
+        classes_text.append(class_name.encode('utf8'))
 
     return tf.train.Example(features = tf.train.Features(feature = {
             'image/height': dataset_util.int64_feature(height),
@@ -155,12 +155,12 @@ def main(_):
     print("Validation examples: %i" % len(val_examples))
 
     # Training set
-    create_tf_record(os.path.join(config_output_dir, 'bibo_train.record'),
+    create_tf_record(os.path.join(config_output_dir, 'bibo_train.tfrecord'),
         label_map_dict,
         train_examples)
 
     # Validation set
-    create_tf_record(os.path.join(config_output_dir, 'bibo_val.record'),
+    create_tf_record(os.path.join(config_output_dir, 'bibo_val.tfrecord'),
         label_map_dict,
         val_examples)
 

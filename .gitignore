@@ -11,3 +11,4 @@ Thumbs.db
 *.mp4
 
 data_tf/*.record
+data_tf/**
