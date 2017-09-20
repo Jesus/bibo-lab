@@ -10,5 +10,8 @@ Thumbs.db
 *.JPG
 *.mp4
 
-data_tf/*.record
-data_tf/**
+model/*.tfrecord
+model/eval/**
+model/train/**
+
+tmp/*

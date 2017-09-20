@@ -20,11 +20,8 @@ won't work correctly.
 
 ## How to start training
 
- 1. Don't start training from scratch, get the [COCO-pretrained Faster R-CNN
-    with Resnet-101
-    model](http://storage.googleapis.com/download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_coco_11_06_2017.tar.gz).
-    Unzip the file contents at `model`.
- 2. If required on your environment, activate Tensor Flow:
+ 1. If required on your environment, activate Tensor Flow:
     `source tensorflow/bin/activate`.
+ 2. Set up the model: `sh run/setup_model.sh`.
  3. Start the training job: `sh run/train.sh`.
  4. Start the evaluation job: `sh run/eval.sh`.

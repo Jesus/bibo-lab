@@ -160,7 +160,7 @@ def main(_):
         train_examples)
 
     # Validation set
-    create_tf_record(os.path.join(config_output_dir, 'bibo_val.tfrecord'),
+    create_tf_record(os.path.join(config_output_dir, 'bibo_eval.tfrecord'),
         label_map_dict,
         val_examples)
 
