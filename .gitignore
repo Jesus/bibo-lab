@@ -15,3 +15,4 @@ model/eval/**
 model/train/**
 
 tmp/*
+log/*.log
