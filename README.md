@@ -22,6 +22,6 @@ won't work correctly.
 
  1. If required on your environment, activate Tensor Flow:
     `source tensorflow/bin/activate`.
- 2. Set up the model: `sh run/setup_model.sh`.
- 3. Start the training job: `sh run/train.sh`.
- 4. Start the evaluation job: `sh run/eval.sh`.
+ 2. Set up the model: `bash run/setup_model.sh`.
+ 3. Start the training job: `bash run/train.sh`.
+ 4. Start the evaluation job: `bash run/eval.sh`.
