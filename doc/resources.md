@@ -34,6 +34,6 @@ http://www.robots.ox.ac.uk/~vgg/software/via/
 
 ---
 
-### AWS EC2
+### Screen documentation
 
-After comparing prices, the best setup seems to be a P2 instance in Ohio.
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-screen-on-an-ubuntu-cloud-server
