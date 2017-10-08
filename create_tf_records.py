@@ -44,6 +44,7 @@ def create_tf_example(image_path, examples, label_map_dict):
     ymax = []
     classes = []
     classes_text = []
+    difficult_obj = []
     for example in examples:
         # box example:
         # {
@@ -53,7 +54,8 @@ def create_tf_example(image_path, examples, label_map_dict):
         #   "width":57,
         #   "height":60
         # }
-        box = json.loads(example["raw"][5])
+        box        = json.loads(example["raw"][5])
+        extra_args = json.loads(example["raw"][6])
 
         xmin.append(float(box["x"]))
         ymin.append(float(box["y"]))
@@ -62,6 +64,11 @@ def create_tf_example(image_path, examples, label_map_dict):
         class_name = 'bib'
         classes.append(label_map_dict[class_name])
         classes_text.append(class_name.encode('utf8'))
+        if "difficult" in extra_args and extra_args["difficult"] == 'y':
+            print(extra_args["difficult"])
+            difficult_obj.append(int(True))
+        else:
+            difficult_obj.append(int(False))
 
     return tf.train.Example(features = tf.train.Features(feature = {
             'image/height': dataset_util.int64_feature(height),
@@ -77,8 +84,8 @@ def create_tf_example(image_path, examples, label_map_dict):
             'image/object/bbox/ymax': dataset_util.float_list_feature(ymax),
             'image/object/class/text': dataset_util.bytes_list_feature(classes_text),
             'image/object/class/label': dataset_util.int64_list_feature(classes),
+            'image/object/difficult': dataset_util.int64_list_feature(difficult_obj)
         }))
-
 
 def create_tf_record(output_filename,
                      label_map_dict,
@@ -133,7 +140,7 @@ def read_examples_list_from_csv(csv_path):
 def read_examples_list(data_dir):
     examples = []
 
-    for csv_file in glob(os.path.join(data_dir, "*/*.csv")):
+    for csv_file in glob(os.path.join(data_dir, "**/*.csv"), recursive=True):
         examples += read_examples_list_from_csv(csv_file)
 
     return examples
