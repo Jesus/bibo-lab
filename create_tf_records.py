@@ -9,6 +9,7 @@ import logging
 import os
 import io
 import random
+import time
 from glob import glob
 import csv
 import json
@@ -65,7 +66,6 @@ def create_tf_example(image_path, examples, label_map_dict):
         classes.append(label_map_dict[class_name])
         classes_text.append(class_name.encode('utf8'))
         if "difficult" in extra_args and extra_args["difficult"] == 'y':
-            print(extra_args["difficult"])
             difficult_obj.append(int(True))
         else:
             difficult_obj.append(int(False))
@@ -106,7 +106,6 @@ def create_tf_record(output_filename,
 
     writer.close()
 
-
 def read_examples_list_from_csv(csv_path):
     dirname = os.path.dirname(csv_path)
     examples = []
@@ -139,27 +138,46 @@ def read_examples_list_from_csv(csv_path):
 
 def read_examples_list(data_dir):
     examples = []
+    csv_files = glob(os.path.join(data_dir, "**/*.csv"), recursive=True)
 
-    for csv_file in glob(os.path.join(data_dir, "**/*.csv"), recursive=True):
+    for csv_file in csv_files:
         examples += read_examples_list_from_csv(csv_file)
 
     return examples
 
+# Splits the examples in two: Training & validation.
+def split_data_set(examples):
+    random.seed(int(round(time.time() * 1000)))
+    random.shuffle(examples)
+
+    train_examples = []
+    eval_examples = []
+
+    temptative_p = 0.7
+    all_image_paths = list(set(map(lambda e: e["image_path"], examples)))
+    n_train_image_paths = int(temptative_p * len(all_image_paths))
+    train_image_paths = all_image_paths[:n_train_image_paths]
+    eval_image_paths = all_image_paths[n_train_image_paths:]
+
+    for example in examples:
+        if example["image_path"] in train_image_paths:
+            train_examples.append(example)
+        elif example["image_path"] in eval_image_paths:
+            eval_examples.append(example)
+        else:
+            raise Exception("Image path not found")
+
+    actual_p = len(train_examples) / float(len(examples)) * 100
+    print("Training examples  : %i (%.2f%%)" % (len(train_examples), actual_p))
+    print("Validation examples: %i" % len(eval_examples))
+
+    return train_examples, eval_examples
+
 def main(_):
     label_map_dict = label_map_util.get_label_map_dict(config_label_map_path)
+    examples_list  = read_examples_list(config_train_dir)
 
-    logging.info('Reading dataset.')
-    examples_list = read_examples_list(config_train_dir)
-
-    # Split set in two: Training & validation.
-    random.seed(42)
-    random.shuffle(examples_list)
-    num_examples = len(examples_list)
-    num_train = int(0.7 * num_examples)
-    train_examples = examples_list[:num_train]
-    val_examples = examples_list[num_train:]
-    print("Training examples  : %i" % len(train_examples))
-    print("Validation examples: %i" % len(val_examples))
+    train_examples, eval_examples = split_data_set(examples_list)
 
     # Training set
     create_tf_record(os.path.join(config_output_dir, 'bibo_train.tfrecord'),
@@ -169,7 +187,7 @@ def main(_):
     # Validation set
     create_tf_record(os.path.join(config_output_dir, 'bibo_eval.tfrecord'),
         label_map_dict,
-        val_examples)
+        eval_examples)
 
 if __name__ == '__main__':
     tf.app.run()
