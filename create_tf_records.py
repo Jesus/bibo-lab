@@ -23,6 +23,8 @@ from collections import defaultdict
 from object_detection.utils import dataset_util
 from object_detection.utils import label_map_util
 
+from utils import read_examples_list
+
 config_label_map_path = "model/label_map.pbtxt"
 config_train_dir = "data_train"
 config_output_dir = "model"
@@ -106,45 +108,6 @@ def create_tf_record(output_filename,
 
     writer.close()
 
-def read_examples_list_from_csv(csv_path):
-    dirname = os.path.dirname(csv_path)
-    examples = []
-
-    # CSV structure:
-    #
-    # idx field
-    # --- -----------------------------------
-    #   0 filename
-    #   1 file_size
-    #   2 file_attributes
-    #   3 region_count
-    #   4 region_id
-    #   5 region_shape_attributes
-    #   6 region_attributes
-    with open(csv_path, "r") as csvfile:
-        annotation_reader = csv.reader(csvfile, delimiter = ",")
-        for annotation in annotation_reader:
-            if annotation[0][0] == "#":
-                continue # This is a comment line...
-            if int(annotation[3]) == 0:
-                continue
-
-            examples.append({
-                "raw": annotation,
-                "image_path": os.path.join(dirname, annotation[0])
-            })
-
-    return examples
-
-def read_examples_list(data_dir):
-    examples = []
-    csv_files = glob(os.path.join(data_dir, "**/*.csv"), recursive=True)
-
-    for csv_file in csv_files:
-        examples += read_examples_list_from_csv(csv_file)
-
-    return examples
-
 # Splits the examples in two: Training & validation.
 def split_data_set(examples):
     random.seed(int(round(time.time() * 1000)))
@@ -155,6 +118,7 @@ def split_data_set(examples):
 
     temptative_p = 0.7
     all_image_paths = list(set(map(lambda e: e["image_path"], examples)))
+    print("Training files     : %i" % len(all_image_paths))
     n_train_image_paths = int(temptative_p * len(all_image_paths))
     train_image_paths = all_image_paths[:n_train_image_paths]
     eval_image_paths = all_image_paths[n_train_image_paths:]

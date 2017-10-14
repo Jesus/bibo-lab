@@ -27,13 +27,26 @@ https://www.tensorflow.org/tutorials/image_retraining
 Object detection example app
 https://github.com/GoogleCloudPlatform/tensorflow-object-detection-example
 
+### Image processing
+
+Tesseract OCR
+https://github.com/tesseract-ocr/tesseract
+
+Automatic License Plate Recognition library
+http://www.openalpr.com/
+
+Max-Margin Object detection
+https://arxiv.org/abs/1502.00046
+
+DLIB
+http://dlib.net/
+
+### Articles & tutorials
+
+Object detection with deep learning and OpenCV
+https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and-opencv/
+
 ### Image annotations
 
 VGG Image Annotator
 http://www.robots.ox.ac.uk/~vgg/software/via/
-
----
-
-### Screen documentation
-
-https://www.digitalocean.com/community/tutorials/how-to-install-and-use-screen-on-an-ubuntu-cloud-server
