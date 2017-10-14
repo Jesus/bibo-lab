@@ -12,7 +12,7 @@ config_annotations_dir = "data_annotated"
 config_train_dir = "data_train"
 
 MAX_LENGTH = 900
-DRAW = True
+DRAW = False
 
 def process_image(image_path, annotations):
     image = Image.open(image_path)
