@@ -34,9 +34,8 @@ def read_examples_list_from_csv(csv_path):
 
 def read_examples_list(data_dir):
     examples = []
-    csv_files = glob(os.path.join(data_dir, "**/*.csv"), recursive=True)
 
-    for csv_file in csv_files:
+    for csv_file in glob(os.path.join(data_dir, "**/*.csv"), recursive=True):
         examples += read_examples_list_from_csv(csv_file)
 
     return examples
