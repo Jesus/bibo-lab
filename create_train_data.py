@@ -93,7 +93,7 @@ def write_csv_file(examples):
                 )])
 
 def process_all_examples(examples):
-    all_image_paths = list(set(map(lambda e: e["image_path"], examples)))[:40]
+    all_image_paths = list(set(map(lambda e: e["image_path"], examples)))
     resized_examples = []
 
     print("Training files     : %i" % len(all_image_paths))
