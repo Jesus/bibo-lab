@@ -10,6 +10,8 @@ Thumbs.db
 *.JPG
 *.mp4
 
+__pycache__
+
 model/*.tfrecord
 model/eval/**
 model/train/**
