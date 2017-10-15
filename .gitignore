@@ -12,9 +12,11 @@ Thumbs.db
 
 __pycache__
 
-model/*.tfrecord
+model/*.record
 model/eval/**
 model/train/**
+
+data_train/*
 
 tmp/*
 log/*.log

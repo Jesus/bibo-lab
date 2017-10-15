@@ -60,10 +60,18 @@ def create_tf_example(image_path, examples, label_map_dict):
         box        = json.loads(example["raw"][5])
         extra_args = json.loads(example["raw"][6])
 
-        xmin.append(float(box["x"]))
-        ymin.append(float(box["y"]))
-        xmax.append(float(box["x"] + box["width"]))
-        ymax.append(float(box["y"] + box["height"]))
+        _xmin = float(box["x"]) / width
+        _ymin = float(box["y"]) / height
+        _xmax = float(box["x"] + box["width"]) / width
+        _ymax = float(box["y"] + box["height"]) / height
+        values = [_xmin, _ymin, _xmax, _ymax]
+        for value in values:
+            if value < 0 or value >= 1:
+                print("Value out of boundaries %s" % example["image_path"])
+        xmin.append(_xmin)
+        ymin.append(_ymin)
+        xmax.append(_xmax)
+        ymax.append(_ymax)
         class_name = 'bib'
         classes.append(label_map_dict[class_name])
         classes_text.append(class_name.encode('utf8'))
@@ -144,12 +152,12 @@ def main(_):
     train_examples, eval_examples = split_data_set(examples_list)
 
     # Training set
-    create_tf_record(os.path.join(config_output_dir, 'bibo_train.tfrecord'),
+    create_tf_record(os.path.join(config_output_dir, 'bibo_train.record'),
         label_map_dict,
         train_examples)
 
     # Validation set
-    create_tf_record(os.path.join(config_output_dir, 'bibo_eval.tfrecord'),
+    create_tf_record(os.path.join(config_output_dir, 'bibo_eval.record'),
         label_map_dict,
         eval_examples)
 
