@@ -19,6 +19,9 @@ https://www.tensorflow.org/tutorials/image_retraining
 Object detection example app
 https://github.com/GoogleCloudPlatform/tensorflow-object-detection-example
 
+Freeze a model
+https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc
+
 ### Other with neural networks
 
 YOLO Project

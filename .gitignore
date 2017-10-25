@@ -13,6 +13,7 @@ Thumbs.db
 __pycache__
 
 model/*.record
+model/*.pb
 model/eval/**
 model/train/**
 
