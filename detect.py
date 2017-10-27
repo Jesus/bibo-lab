@@ -44,6 +44,8 @@ with detection_graph.as_default():
         # the array based representation of the image will be used later in order to prepare the
         # result image with boxes and labels on it.
         image = Image.open(input_path)
+        w, h = image.size
+        draw = ImageDraw.Draw(image)
         image_np = load_image_into_numpy_array(image)
 
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
@@ -53,9 +55,18 @@ with detection_graph.as_default():
         boxes, scores, classes, num = map(np.squeeze, [boxes, scores, classes, num])
 
         for i in range(int(num)):
-            if scores[i] < 0.7: continue
+            if scores[i] < 0.1: continue
 
             print("")
             print(f"box: {boxes[i]}")
             print(f"score: {scores[i]}")
             print(f"class: {category_index[classes[i]]['name']}")
+
+            ymin, xmin, ymax, xmax = boxes[i]
+            top_left     = (xmin * w, ymin * h)
+            top_right    = (xmax * w, ymin * h)
+            bottom_right = (xmax * w, ymax * h)
+            bottom_left  = (xmin * w, ymax * h)
+            draw.polygon([top_left, top_right, bottom_right, bottom_left], outline="red")
+
+            image.save(output_path)
