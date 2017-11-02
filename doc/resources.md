@@ -32,14 +32,14 @@ https://pjreddie.com/darknet/yolo/
 PIL
 http://pillow.readthedocs.io/en/3.1.x/reference/Image.html
 
-Tesseract OCR
-https://github.com/tesseract-ocr/tesseract
-
 Automatic License Plate Recognition library
 http://www.openalpr.com/
 
 Max-Margin Object detection
 https://arxiv.org/abs/1502.00046
+
+Detect and recognize text in natural images
+https://es.mathworks.com/help/vision/examples/automatically-detect-and-recognize-text-in-natural-images.html
 
 DLIB
 http://dlib.net/
@@ -53,3 +53,13 @@ https://www.pyimagesearch.com/2017/09/11/object-detection-with-deep-learning-and
 
 VGG Image Annotator
 http://www.robots.ox.ac.uk/~vgg/software/via/
+
+### Tesseract OCR
+
+https://www.pyimagesearch.com/2017/07/10/using-tesseract-ocr-python/
+
+http://felix.abecassis.me/2011/10/opencv-rotation-deskewing/
+
+### Character segmentation
+
+https://gurus.pyimagesearch.com/lesson-sample-segmenting-characters-from-license-plates/
