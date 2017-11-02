@@ -55,7 +55,8 @@ with detection_graph.as_default():
         boxes, scores, classes, num = map(np.squeeze, [boxes, scores, classes, num])
 
         for i in range(int(num)):
-            if scores[i] < 0.1: continue
+            if scores[i] < 0.001: continue
+            score = int(scores[i] * 1000)
 
             print("")
             print(f"box: {boxes[i]}")
@@ -63,10 +64,18 @@ with detection_graph.as_default():
             print(f"class: {category_index[classes[i]]['name']}")
 
             ymin, xmin, ymax, xmax = boxes[i]
-            top_left     = (xmin * w, ymin * h)
-            top_right    = (xmax * w, ymin * h)
-            bottom_right = (xmax * w, ymax * h)
-            bottom_left  = (xmin * w, ymax * h)
-            draw.polygon([top_left, top_right, bottom_right, bottom_left], outline="red")
 
-            image.save(output_path)
+            # top_left     = (xmin * w, ymin * h)
+            # top_right    = (xmax * w, ymin * h)
+            # bottom_right = (xmax * w, ymax * h)
+            # bottom_left  = (xmin * w, ymax * h)
+            # draw.polygon([top_left, top_right, bottom_right, bottom_left], outline="red")
+            # image.save(output_path)
+
+            top     = ymin * h
+            left    = xmin * w
+            right   = xmax * w
+            bottom  = ymax * h
+
+            bib = image.crop((left, top, right, bottom))
+            bib.save(f"output/bib-{i}-{score}.jpg")
