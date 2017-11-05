@@ -6,3 +6,5 @@
      https://stackoverflow.com/q/46135528/814224
 [x] This script crops an image to just the content of the text, test it:
     https://github.com/danvk/oldnyc/blob/master/ocr/tess/crop_morphology.py
+[ ] Create a standalone package with the training data for bib detection.
+[ ] Replace bib detection model by `faster_rcnn_nas` (?).

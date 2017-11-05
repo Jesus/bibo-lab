@@ -7,6 +7,7 @@ We're trying to train a bib detector here.
   - `data_train` has a collection of images that have annotations in the format
     given by VGG Image Annotator. These images are ready to be processed by
     `create_tf_records.py` to build the TF examples.
+  - `data_bibs` has a collection of bibs, these are outputs of `detect_bib.py`.
   - `model` contains the output of `create_tf_records.py`, these are examples
     ready to be used by TF for training.
 
