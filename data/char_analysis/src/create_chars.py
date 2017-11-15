@@ -13,6 +13,7 @@ for image_path in glob(os.path.join(bibs_path, "**/*.jpg"), recursive=True):
     # load the example image and convert it to grayscale
     image = cv2.imread(image_path)
     image = imutils.resize(image, width=200)
+    image_orig = image
     image = cv2.bilateralFilter(image, 9, 75, 75)
     image_width, image_height, _ = image.shape
 
@@ -76,6 +77,7 @@ for image_path in glob(os.path.join(bibs_path, "**/*.jpg"), recursive=True):
     alpha = np.arctan(1 / ratio)
     digits = []
     digits_b = []
+    digits_c = []
     for character in characters:
         ((x, y), d) = character
 
@@ -102,6 +104,10 @@ for image_path in glob(os.path.join(bibs_path, "**/*.jpg"), recursive=True):
         digit_b = cv2.resize(digit_b, (output_width, output_height))
         digits_b.append(digit_b)
 
+        # Digit coordinates
+        digit_c = ((x, y), d)
+        digits_c.append(digit_c)
+
     # Prepare visualization
     vis_digits   = np.hstack(digits)
     vis_digits_b = np.hstack(digits_b)
@@ -119,14 +125,15 @@ for image_path in glob(os.path.join(bibs_path, "**/*.jpg"), recursive=True):
     if not os.path.isdir(output_folder_path):
         os.makedirs(output_folder_path)
 
+    file_name   = os.path.basename(image_path)
+    output_path = f"{output_folder_path}/{file_name}"
+    cv2.imwrite(output_path, image_orig)
     for idx, digit in enumerate(digits):
-        ((x, y), d) = characters[idx]
+        ((x, y), d) = digits_c[idx]
 
-        file_name   = os.path.basename(image_path)
-        output_path = f"{output_folder_path}/{file_name}"
-        output_path = output_path.replace(".jpg", ("-%d.%d.%d.jpg" % (x, y, d)))
+        digit_path = output_path.replace(".jpg", (".%d_%d_%d.jpg" % (x, y, d)))
 
-        print(output_path)
-        cv2.imwrite(output_path, digit)
+        print(digit_path)
+        cv2.imwrite(digit_path, digit)
 
     print("")
