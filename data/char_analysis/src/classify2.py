@@ -1,5 +1,6 @@
 from skimage.filters import threshold_local
 from skimage import measure
+import fnmatch
 from glob import glob
 import numpy as np
 import imutils
@@ -15,14 +16,13 @@ annotations = {}
 
 def save_annotations():
     print("-" * 80)
+    print("Saving " + str(len(annotations)) + " annotations")
     for image_path, digit in annotations.items():
-        print("%(image_path): %(digit)" % locals())
-
         with open(annotations_path, 'a') as csv_file:
             if digit == None:
-                csv_file.write("%(image_path),n,\n")
+                csv_file.write("%(image_path)s,n,\n" % locals())
             else:
-                csv_file.write("%(image_path),y,%(digit)\n" % locals())
+                csv_file.write("%(image_path)s,y,%(digit)d\n" % locals())
 
 def annotate(image_path):
     print(image_path)
@@ -42,7 +42,7 @@ def annotate(image_path):
     h = int(d * np.sin(alpha))
 
     bib_path = os.path.dirname(image_path)
-    bib_path = "%(bib_path)/%(bib_file_name).%(bib_file_extension)" % locals()
+    bib_path = "%(bib_path)s/%(bib_file_name)s.%(bib_file_extension)s" % locals()
 
     digit = cv2.imread(image_path)
     bib   = cv2.imread(bib_path)
@@ -68,7 +68,7 @@ def annotate(image_path):
         else:
             print("Invalid key: " + key)
 
-    print("Digit: " + digit)
+    print("Digit: " + str(digit))
     annotations[image_path] = digit
 
     return True
@@ -79,7 +79,20 @@ with open(annotations_path, "r") as csv_file:
     for annotation in csv_reader:
         annotated_files.append(annotation[0])
 
-image_paths = glob(os.path.join(chars_path, "**/*.*.jpg"), recursive=True)
+
+def traverse_path(root, pattern):
+    results = []
+    for base, directories, files in os.walk(root):
+        for result in fnmatch.filter(files, pattern):
+            result = os.path.join(base, result)
+            results.append(result)
+        for directory in directories:
+            for result in traverse_path(os.path.join(root, directory), pattern):
+                results.append(result)
+
+    return results
+image_paths = traverse_path(chars_path, "*.*.jpg")
+
 index = 0
 count = 0
 while index < len(image_paths) and count < 500:
