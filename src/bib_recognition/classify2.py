@@ -6,8 +6,8 @@ import csv
 import cv2
 import os
 
-bibs_path        = "data/bib_recognition/annotations/bibs"
-annotations_path = "data/bib_recognition/annotations/bibs.csv"
+bibs_path        = "data/number_recognition/annotations/bibs"
+annotations_path = "data/number_recognition/annotations/bibs.csv"
 annotations = {}
 
 def save_annotations():
