@@ -7,9 +7,10 @@ from PIL import Image
 from PIL import ImageDraw
 
 from utils import read_examples_list
+from config import bibs_path
 
 annotations_path = "data/bib_detection/annotations"
-bibs_path        = "data/number_recognition/annotations/bibs/ground_truth"
+ground_truth_bibs_path = os.path.join(config.bibs_path, "ground_truth")
 
 def process_image(image_path, annotations):
     new_annotations = []
@@ -21,7 +22,7 @@ def process_image(image_path, annotations):
         if image.format != 'JPEG':
             raise ValueError('Image format not JPEG')
 
-        new_image_path = image_path.replace(annotations_path, bibs_path)
+        new_image_path = image_path.replace(annotations_path, ground_truth_bibs_path)
         new_image_path = new_image_path.replace(".jpg", "-%02d.jpg" % count)
         new_image_path = new_image_path.replace(".JPG", "-%02d.JPG" % count)
         count = count + 1
