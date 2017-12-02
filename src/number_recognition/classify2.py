@@ -13,12 +13,12 @@ annotations = {}
 def save_annotations():
     print("-" * 80)
     print("Saving " + str(len(annotations)) + " annotations")
-    for image_path, digit in annotations.items():
+    for image_path, number in annotations.items():
         with open(annotations_path, 'a') as csv_file:
-            if digit == None:
-                csv_file.write("%(image_path)s,n,\n" % locals())
+            if number == "":
+                csv_file.write("%s,n,\n" % image_path)
             else:
-                csv_file.write("%(image_path)s,y,%(digit)d\n" % locals())
+                csv_file.write("%s,y,%s\n" % (image_path, number))
 
 def annotate(image_path):
     print(image_path)
@@ -26,15 +26,14 @@ def annotate(image_path):
     bib = cv2.imread(image_path)
     cv2.imshow("Bib", bib)
 
-    number = 0
+    number = ""
     while True:
         key = cv2.waitKey(0)
         if key == 46 or key == 43 or key == 45 or key == 97: # chars '.', '+' & '-'
-            number = None
             break
         elif key >= 48 and key <= 57: # digit
             digit = key - 48
-            number = number * 10 + digit
+            number = number + str(digit)
         elif key == 13:
             break
         elif key == 8:
@@ -45,7 +44,7 @@ def annotate(image_path):
         else:
             print("Invalid key: %d" % key)
 
-    print("Number: " + str(number))
+    print("Number: " + number)
     annotations[image_path] = number
 
     return True
@@ -71,7 +70,7 @@ image_paths = traverse_path(bibs_path, "*.jpg")
 
 index = 0
 count = 0
-while index < len(image_paths) and count < 500:
+while index < len(image_paths) and count < 10:
     image_path = image_paths[index]
     if image_path in annotated_files:
         print("Already annotated: " + image_path)
