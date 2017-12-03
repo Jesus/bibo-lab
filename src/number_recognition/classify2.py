@@ -70,7 +70,7 @@ image_paths = traverse_path(bibs_path, "*.jpg")
 
 index = 0
 count = 0
-while index < len(image_paths) and count < 10:
+while index < len(image_paths) and count < 500:
     image_path = image_paths[index]
     if image_path in annotated_files:
         print("Already annotated: " + image_path)
