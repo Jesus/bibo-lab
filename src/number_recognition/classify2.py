@@ -6,6 +6,10 @@ import csv
 import cv2
 import os
 
+import time
+
+time_start = time.time()
+
 bibs_path        = "data/number_recognition/annotations/bibs"
 annotations_path = "data/number_recognition/annotations/bibs.csv"
 annotations = {}
@@ -81,8 +85,14 @@ while index < len(image_paths) and count < 500:
     if annotate(image_path):
         index = index + 1
         count = count + 1
+        save_partial_annotations()
     else:
         index = index - 1
         count = count - 1
 
 save_annotations()
+
+elapsed_seconds = int(time.time() - time_start)
+elapsed_minutes = elapsed_seconds / 60
+elapsed_seconds = elapsed_seconds % 60
+print("Time spent: %dm %ds" % (elapsed_minutes, elapsed_seconds))
