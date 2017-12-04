@@ -14,17 +14,38 @@ bibs_path        = "data/number_recognition/annotations/bibs"
 annotations_path = "data/number_recognition/annotations/bibs.csv"
 annotations = {}
 
+saved_annotations = []
+
+def save_annotation(image_path, number):
+    if image_path in saved_annotations:
+        return
+
+    saved_annotations.append(image_path)
+    with open(annotations_path, 'a') as csv_file:
+        if number == "":
+            csv_file.write("%s,n,\n" % image_path)
+        else:
+            csv_file.write("%s,y,%s\n" % (image_path, number))
+
+def save_partial_annotations():
+    limit = len(annotations) - 5
+    for idx, annotation in enumerate(annotations.items()):
+        if idx >= limit:
+            break
+
+        image_path, number = annotation
+        save_annotation(image_path, number)
+
 def save_annotations():
     print("-" * 80)
-    print("Saving " + str(len(annotations)) + " annotations")
+    print("Saved " + str(len(annotations)) + " annotations: " +
+        str(len(saved_annotations)) + " during classification, " +
+        str(len(annotations) - len(saved_annotations)) + " at close")
     for image_path, number in annotations.items():
-        with open(annotations_path, 'a') as csv_file:
-            if number == "":
-                csv_file.write("%s,n,\n" % image_path)
-            else:
-                csv_file.write("%s,y,%s\n" % (image_path, number))
+        save_annotation(image_path, number)
 
 def annotate(image_path):
+    print("")
     print(image_path)
 
     bib = cv2.imread(image_path)
