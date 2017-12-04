@@ -16,4 +16,4 @@
 import fsns
 import fsns_test
 
-__all__ = [fsns, fsns_test]
+__all__ = [fsns, fsns_test, bibo]
