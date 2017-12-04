@@ -24,6 +24,7 @@ def annotate(image_path):
     print(image_path)
 
     bib = cv2.imread(image_path)
+    bib = cv2.resize(bib, (120, 120))
     cv2.imshow("Bib", bib)
 
     number = ""
