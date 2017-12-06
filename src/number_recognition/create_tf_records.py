@@ -17,7 +17,7 @@ def _int64_feature(value):
 def _bytes_feature(value):
   return tf.train.Feature(bytes_list=tf.train.BytesList(value=value))
 
-def encode_number_string(number):
+def encode_digit(digit):
     charset = {
         "0": 0,
         "1": 1,
@@ -30,23 +30,29 @@ def encode_number_string(number):
         "8": 8,
         "9": 9
     }
-    null_char_id = 10
+    return charset[digit]
+
+def encode_number(number):
+    null_char_code = 10
     length = 6
 
-    # TODO...
-    #                    a b c - -
-    # char_ids_padded = [0,1,2,3,3]
-    # char_ids_unpadded = [0,1,2]
-    char_ids_padded = []
-    char_ids_unpadded = []
+    char_ids_padded = [null_char_code] * length
+    char_ids_unpadded = [null_char_code] * len(number)
+
+    for index in range(length):
+        if index < len(number):
+            char_code = encode_digit(number[index])
+            char_ids_padded[index] = char_ids_unpadded[index] = char_code
+        else:
+            char_ids_padded[index] = null_char_code
+
     return char_ids_padded, char_ids_unpadded
 
 def create_tf_example(image_path, number):
     image = cv2.imread(image_path)
     image = cv2.resize(image, (80, 80))
 
-    number = str(number)
-    char_ids_padded, char_ids_unpadded = encode_number_string(number)
+    char_ids_padded, char_ids_unpadded = encode_number(number)
 
     example = tf.train.Example(features=tf.train.Features(
       feature={
