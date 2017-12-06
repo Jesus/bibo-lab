@@ -122,7 +122,7 @@ def get_examples_split():
         elif index < (train_c + test_c):
             test_examples[example_path] = number
         else:
-            validation_examples = number
+            validation_examples[example_path] = number
 
     return (train_examples, test_examples, validation_examples)
 
