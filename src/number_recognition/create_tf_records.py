@@ -1,3 +1,11 @@
+import os, sys
+sys.path.insert(0, os.path.normpath(os.path.dirname(__file__) + "/.."))
+import config
+
+import csv
+import random
+import time
+
 import tensorflow as tf
 
 def _float_feature(value):
@@ -63,23 +71,68 @@ def create_tf_record(output_filename, examples):
 
     writer.close()
 
-def split_examples():
-    return ([], [], [])
+def get_examples_split():
+    test_p = 0.2
+    validation_p = 0.2
+
+    example_paths = []
+    examples = {}
+    with open(config.annotations_path, "r") as csv_file:
+        annotation_reader = csv.reader(csv_file, delimiter = ",")
+        for annotation in annotation_reader:
+            example_path, _, number = annotation
+
+            if number == "":
+                continue
+
+            if example_path in example_paths:
+                print(f"ERROR: Duplicate path '{example_path}'")
+                exit(1)
+
+            example_paths.append(example_path)
+            examples[example_path] = number
+
+    test_c       = int(len(example_paths) * test_p)
+    validation_c = int(len(example_paths) * validation_p)
+    train_c      = len(example_paths) - test_c - validation_c
+
+    print("Train      : %i" % train_c)
+    print("Test       : %i" % test_c)
+    print("Validation : %i" % validation_c)
+    print("Total      : %i" % len(example_paths))
+
+    random.seed(int(round(time.time() * 1000)))
+    random.shuffle(example_paths)
+
+    train_examples = {}
+    test_examples = {}
+    validation_examples = {}
+    for index in range(len(examples)):
+        example_path = example_paths[index]
+        number = examples[example_path]
+
+        if index < train_c:
+            train_examples[example_path] = number
+        elif index < (train_c + test_c):
+            test_examples[example_path] = number
+        else:
+            validation_examples = number
+
+    return (train_examples, test_examples, validation_examples)
 
 def main(_):
-    train_examples, test_examples, validation_examples = get_examples()
+    train_examples, test_examples, validation_examples = get_examples_split()
 
     # Training set
-    create_tf_record(os.path.join(config_output_dir, 'train.record'),
+    create_tf_record(os.path.join(config.model_path, 'train.record'),
         train_examples)
 
     # Test set
-    create_tf_record(os.path.join(config_output_dir, 'test.record'),
+    create_tf_record(os.path.join(config.model_path, 'test.record'),
         test_examples)
 
     # Validation set
-    create_tf_record(os.path.join(config_output_dir, 'validation.record'),
-        label_map_dict,
+    create_tf_record(os.path.join(config.model_path, 'validation.record'),
         validation_examples)
 
 if __name__ == '__main__':
