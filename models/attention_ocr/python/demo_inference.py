@@ -89,8 +89,9 @@ def main(_):
     # predictions = sess.run(endpoints.predicted_chars,
     #                        feed_dict={images_placeholder: images_data})
   print("Predicted strings:")
-  for line in predictions:
-    print(line)
+  for idx, prediction in enumerate(predictions):
+    image_path = FLAGS.image_path_pattern % idx
+    print("%s: %s" % (image_path, prediction.decode('utf8')))
 
 
 if __name__ == '__main__':
