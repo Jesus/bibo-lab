@@ -11,15 +11,15 @@ DEFAULT_CONFIG = {
     'name': 'Bibo',
     'splits': {
         'train': {
-            'size': 800,
+            'size': 8147,
             'pattern': 'train*'
         },
         'test': {
-            'size': 200,
+            'size': 555,
             'pattern': 'test*'
         },
         'validation': {
-            'size': 200,
+            'size': 555,
             'pattern': 'validation*'
         }
     },
