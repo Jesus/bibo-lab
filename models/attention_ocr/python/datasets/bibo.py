@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
     },
     'charset_filename': 'charset.txt',
     'image_shape': (80, 80, 3),
-    'num_of_views': 1
+    'num_of_views': 1,
     'max_sequence_length': 6,
     'null_code': 10,
     'items_to_descriptions': {
@@ -46,7 +46,7 @@ def read_charset(filename, null_character=u'\u2591'):
   Args:
     filename: a path to the charset file.
     null_character: a unicode character used to replace '<null>' character. the
-      default value is a light shade block '░'.
+      default value is a light shade block ''.
 
   Returns:
     a dictionary with keys equal to character codes and values - unicode
@@ -61,7 +61,7 @@ def read_charset(filename, null_character=u'\u2591'):
         logging.warning('incorrect charset file. line #%d: %s', i, line)
         continue
       code = int(m.group(1))
-      char = m.group(2).decode('utf-8')
+      char = m.group(2)
       if char == '<nul>':
         char = null_character
       charset[code] = char

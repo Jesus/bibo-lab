@@ -64,7 +64,7 @@ def read_charset(filename, null_character=u'\u2591'):
   Args:
     filename: a path to the charset file.
     null_character: a unicode character used to replace '<null>' character. the
-      default value is a light shade block '░'.
+      default value is a light shade block ''.
 
   Returns:
     a dictionary with keys equal to character codes and values - unicode
