@@ -5,17 +5,21 @@ import config
 import csv
 import random
 import time
+import cv2
 
 import tensorflow as tf
 
-def _float_feature(value):
-  return tf.train.Feature(float_list=tf.train.FloatList(value=value))
-
 def _int64_feature(value):
-  return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+def _int64_list_feature(value):
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 
 def _bytes_feature(value):
-  return tf.train.Feature(bytes_list=tf.train.BytesList(value=value))
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+def _bytes_list_feature(value):
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=value))
 
 def encode_digit(digit):
     charset = {
@@ -49,29 +53,31 @@ def encode_number(number):
     return char_ids_padded, char_ids_unpadded
 
 def create_tf_example(image_path, number):
+    # Implemented thanks to this SO answer by Alex Gorban:
+    # https://stackoverflow.com/a/44461910/814224
     image = cv2.imread(image_path)
     image = cv2.resize(image, (80, 80))
+    _, jpeg_image = cv2.imencode('.jpeg', image)
 
     char_ids_padded, char_ids_unpadded = encode_number(number)
 
-    example = tf.train.Example(features=tf.train.Features(
+    return tf.train.Example(features=tf.train.Features(
       feature={
-        'image/format': _bytes_feature("png"),
-        'image/encoded': _bytes_feature(image.tostring()),
-        'image/class': _int64_feature(char_ids_padded),
-        'image/unpadded_class': _int64_feature(char_ids_unpadded),
+        'image/format': _bytes_feature("PNG".encode('utf8')),
+        'image/encoded': _bytes_feature(jpeg_image.tostring()),
+        'image/class': _int64_list_feature(char_ids_padded),
+        'image/unpadded_class': _int64_list_feature(char_ids_unpadded),
         'height': _int64_feature(image.shape[0]),
         'width': _int64_feature(image.shape[1]),
         'orig_width': _int64_feature(image.shape[1]),
-        'image/text': _bytes_feature(number)
+        'image/text': _bytes_feature(number.encode('utf8'))
       }
     ))
 
 def create_tf_record(output_filename, examples):
     writer = tf.python_io.TFRecordWriter(output_filename)
 
-    for example in examples:
-        image_path, number = example
+    for image_path, number in examples.items():
         tf_example = create_tf_example(image_path, number)
         writer.write(tf_example.SerializeToString())
 
