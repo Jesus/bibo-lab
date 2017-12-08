@@ -537,7 +537,7 @@ class Model(object):
       for name, value in names_to_values.items():
         summary_name = 'eval/' + name
         tf.summary.scalar(summary_name, tf.Print(value, [value], summary_name))
-      return names_to_updates.values()
+      return list(names_to_updates.values())
 
   def create_init_fn_to_restore(self, master_checkpoint,
       inception_checkpoint=None):
