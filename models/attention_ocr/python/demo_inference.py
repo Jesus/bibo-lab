@@ -1,9 +1,9 @@
 """A script to run inference on a set of image files.
 
-NOTE #1: The Attention OCR model was trained only using FSNS train dataset and 
-it will work only for images which look more or less similar to french street 
-names. In order to apply it to images from a different distribution you need 
-to retrain (or at least fine-tune) it using images from that distribution. 
+NOTE #1: The Attention OCR model was trained only using FSNS train dataset and
+it will work only for images which look more or less similar to french street
+names. In order to apply it to images from a different distribution you need
+to retrain (or at least fine-tune) it using images from that distribution.
 
 NOTE #2: This script exists for demo purposes only. It is highly recommended
 to use tools and mechanisms provided by the TensorFlow Serving system to run
@@ -17,6 +17,7 @@ python demo_inference.py --batch_size=32 \
 """
 import numpy as np
 import PIL.Image
+import cv2
 
 import tensorflow as tf
 from tensorflow.python.platform import flags
@@ -48,8 +49,13 @@ def load_images(file_pattern, batch_size, dataset_name):
   for i in range(batch_size):
     path = file_pattern % i
     print("Reading %s" % path)
-    pil_image = PIL.Image.open(tf.gfile.GFile(path))
-    images_actual_data[i, ...] = np.asarray(pil_image)
+    image = cv2.imread(path)
+    image = cv2.resize(image, (width, height))
+    # pil_image = PIL.Image.open(path)
+    # image = np.asarray(pil_image)
+    # image = image[:,:,:3]
+    # print(f"{image.shape}")
+    images_actual_data[i, ...] = image
   return images_actual_data
 
 
@@ -80,6 +86,8 @@ def main(_):
     init_fn(sess)
     predictions = sess.run(endpoints.predicted_text,
                            feed_dict={images_placeholder: images_data})
+    # predictions = sess.run(endpoints.predicted_chars,
+    #                        feed_dict={images_placeholder: images_data})
   print("Predicted strings:")
   for line in predictions:
     print(line)
