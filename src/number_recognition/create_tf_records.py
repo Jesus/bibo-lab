@@ -84,8 +84,8 @@ def create_tf_record(output_filename, examples):
     writer.close()
 
 def get_examples_split():
-    test_p = 0.2
-    validation_p = 0.2
+    test_p = 0.06
+    validation_p = 0.06
 
     example_paths = []
     examples = {}
