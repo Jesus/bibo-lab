@@ -17,5 +17,7 @@ __pycache__
 eval
 train
 
+workdir*
+
 tmp/*
 log/*.log
