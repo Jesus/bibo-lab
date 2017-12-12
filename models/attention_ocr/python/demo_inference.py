@@ -41,7 +41,6 @@ def get_dataset_image_size(dataset_name):
   height, width, _ = ds_module.DEFAULT_CONFIG['image_shape']
   return width, height
 
-
 def load_images(file_pattern, batch_size, dataset_name):
   width, height = get_dataset_image_size(dataset_name)
   images_actual_data = np.ndarray(shape=(batch_size, height, width, 3),
@@ -51,10 +50,10 @@ def load_images(file_pattern, batch_size, dataset_name):
     print("Reading %s" % path)
     image = cv2.imread(path)
     image = cv2.resize(image, (width, height))
-    # pil_image = PIL.Image.open(path)
-    # image = np.asarray(pil_image)
-    # image = image[:,:,:3]
-    # print(f"{image.shape}")
+    image = image / 255.0
+    # cv2.imshow("image", image)
+    # cv2.waitKey(0)
+
     images_actual_data[i, ...] = image
   return images_actual_data
 
@@ -74,7 +73,6 @@ def load_model(checkpoint, batch_size, dataset_name):
   init_fn = model.create_init_fn_to_restore(checkpoint)
   return images_placeholder, endpoints, init_fn
 
-
 def main(_):
   images_placeholder, endpoints, init_fn = load_model(FLAGS.checkpoint,
                                                       FLAGS.batch_size,
@@ -86,12 +84,21 @@ def main(_):
     init_fn(sess)
     predictions = sess.run(endpoints.predicted_text,
                            feed_dict={images_placeholder: images_data})
-    # predictions = sess.run(endpoints.predicted_chars,
-    #                        feed_dict={images_placeholder: images_data})
   print("Predicted strings:")
   for idx, prediction in enumerate(predictions):
     image_path = FLAGS.image_path_pattern % idx
-    print("%s: %s" % (image_path, prediction.decode('utf8')))
+    number = prediction.decode('utf8')
+    number = number.replace("░", "")
+
+    image = cv2.imread(image_path)
+    image = cv2.resize(image, (80, 80))
+
+    footer = np.zeros((40, 80, 3), np.uint8)
+    cv2.putText(footer, number, (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2, cv2.LINE_AA)
+    image = np.vstack([image, footer])
+
+    cv2.imshow("image", image)
+    cv2.waitKey(0)
 
 
 if __name__ == '__main__':
