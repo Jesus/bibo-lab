@@ -1,4 +1,4 @@
-OBJECT_DETECTION_PATH="$HOME/workspace/models/object_detection"
+OBJECT_DETECTION_PATH="$HOME/models/object_detection"
 
 # We want to ensure that this is run from the root of the project dir
 if [ "${PWD##*/}" != "bibo" ]; then
