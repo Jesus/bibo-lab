@@ -12,7 +12,8 @@ We're trying to train a bib detector here.
         of the images were cropped using the data from ground truth for bib
         detection and others were cropped using the predictions of the bib
         detector. All annotations are kept in a single file `bibs.csv`.
-
+  - `models` contains code from `https://github.com/tensorflow/models`. More
+    specifically, it contains the `object_detection` & `attention_ocr` models.
 
 ## Training the bib detector
 
