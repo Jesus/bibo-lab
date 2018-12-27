@@ -2,12 +2,11 @@ import os, sys
 sys.path.insert(0, os.path.normpath(os.path.dirname(__file__) + "/.."))
 import config
 
-import random
-import time
-import cv2
-
 import urllib.request
 import psycopg2
+import csv
+
+import cv2
 
 import tensorflow as tf
 
@@ -64,21 +63,21 @@ def create_tf_example(example):
     #     "number": row[7]
     # }
     image = cv2.imread(example['image_path'])
-    if example['y0'] < example['y1']:
-        y_min = example['y0']
-        y_max = example['y1']
-    else:
-        y_min = example['y1']
-        y_max = example['y0']
+    if example['crop']:
+        if example['y0'] < example['y1']:
+            y_min = example['y0']
+            y_max = example['y1']
+        else:
+            y_min = example['y1']
+            y_max = example['y0']
 
-    if example['x0'] < example['x1']:
-        x_min = example['x0']
-        x_max = example['x1']
-    else:
-        x_min = example['x1']
-        x_max = example['x0']
-
-    image = image[y_min:y_max, x_min:x_max]
+        if example['x0'] < example['x1']:
+            x_min = example['x0']
+            x_max = example['x1']
+        else:
+            x_min = example['x1']
+            x_max = example['x0']
+        image = image[y_min:y_max, x_min:x_max]
     image = cv2.resize(image, (80, 80))
     _, jpeg_image = cv2.imencode('.jpeg', image)
 
@@ -176,6 +175,7 @@ def get_pg_examples():
 
         examples[split_name].append({
             "image_path": local_path,
+            "crop": True,
             "x0": int(row[3]),
             "y0": int(row[4]),
             "x1": int(row[5]),
@@ -187,8 +187,11 @@ def get_pg_examples():
     return examples
 
 def get_csv_examples():
-    example_paths = []
-    examples = {}
+    examples = {
+        "test": [],
+        "validation": [],
+        "train": []
+    }
     with open(config.annotations_path, "r") as csv_file:
         annotation_reader = csv.reader(csv_file, delimiter = ",")
         for annotation in annotation_reader:
@@ -197,40 +200,14 @@ def get_csv_examples():
             if number == "":
                 continue
 
-            if example_path in example_paths:
-                print(f"ERROR: Duplicate path '{example_path}'")
-                exit(1)
+            split_name = get_split_name(f"{os.path.basename(example_path)}")
+            examples[split_name].append({
+                "image_path": example_path,
+                "crop": False,
+                "number": number
+            })
 
-            example_paths.append(example_path)
-            examples[example_path] = number
-
-    test_c       = int(len(example_paths) * test_p)
-    validation_c = int(len(example_paths) * validation_p)
-    train_c      = len(example_paths) - test_c - validation_c
-
-    print("Train      : %i" % train_c)
-    print("Test       : %i" % test_c)
-    print("Validation : %i" % validation_c)
-    print("Total      : %i" % len(example_paths))
-
-    random.seed(int(round(time.time() * 1000)))
-    random.shuffle(example_paths)
-
-    train_examples = {}
-    test_examples = {}
-    validation_examples = {}
-    for index in range(len(examples)):
-        example_path = example_paths[index]
-        number = examples[example_path]
-
-        if index < train_c:
-            train_examples[example_path] = number
-        elif index < (train_c + test_c):
-            test_examples[example_path] = number
-        else:
-            validation_examples[example_path] = number
-
-    return (train_examples, test_examples, validation_examples)
+    return examples
 
 def show_dataset_stats(examples):
     train_c = len(examples['train'])
@@ -238,15 +215,20 @@ def show_dataset_stats(examples):
     validation_c = len(examples['validation'])
     total_c = train_c + test_c + validation_c
 
-    print("Train      : %i (%.0f)" % (train_c, train_c * 100 / total_c))
-    print("Test       : %i (%.0f)" % (test_c, test_c * 100 / total_c))
-    print("Validation : %i (%.0f)" % (validation_c, validation_c * 100 / total_c))
-    print("Total      : %i" % total_c)
+    print("Train:       %5i ( %.1f%% )" % (train_c, train_c * 100 / total_c))
+    print("Test:        %5i ( %.1f%% )" % (test_c, test_c * 100 / total_c))
+    print("Validation:  %5i ( %.1f%% )" % (validation_c, validation_c * 100 / total_c))
+    print("")
+    print("Total:       %5i" % total_c)
 
 def main():
     pg_examples = get_pg_examples()
-    # csv_examples = get_pg_examples()
-    examples = pg_examples
+    csv_examples = get_csv_examples()
+    examples = {
+        "test": pg_examples["test"] + csv_examples["test"],
+        "validation": pg_examples["validation"] + csv_examples["validation"],
+        "train": pg_examples["train"] + csv_examples["train"]
+    }
     show_dataset_stats(examples)
 
     # Training set
