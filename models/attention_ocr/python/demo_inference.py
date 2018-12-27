@@ -91,9 +91,9 @@ def main(_):
     number = number.replace("░", "")
 
     image = cv2.imread(image_path)
-    image = cv2.resize(image, (80, 80))
+    image = cv2.resize(image, (120, 120))
 
-    footer = np.zeros((40, 80, 3), np.uint8)
+    footer = np.zeros((40, 120, 3), np.uint8)
     cv2.putText(footer, number, (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2, cv2.LINE_AA)
     image = np.vstack([image, footer])
 

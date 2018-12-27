@@ -24,12 +24,12 @@ DEFAULT_CONFIG = {
         }
     },
     'charset_filename': 'charset.txt',
-    'image_shape': (80, 80, 3),
+    'image_shape': (120, 120, 3),
     'num_of_views': 1,
     'max_sequence_length': 6,
     'null_code': 10,
     'items_to_descriptions': {
-        'image': 'A [80 x 80 x 3] color image.',
+        'image': 'A [120 x 120 x 3] color image.',
         'label': 'Characters codes.',
         'text': 'A unicode string.',
         'length': 'A length of the encoded text.',

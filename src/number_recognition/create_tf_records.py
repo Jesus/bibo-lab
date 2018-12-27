@@ -78,7 +78,7 @@ def create_tf_example(example):
             x_min = example['x1']
             x_max = example['x0']
         image = image[y_min:y_max, x_min:x_max]
-    image = cv2.resize(image, (80, 80))
+    image = cv2.resize(image, (120, 120))
     _, jpeg_image = cv2.imencode('.jpeg', image)
 
     char_ids_padded, char_ids_unpadded = encode_number(example['number'])
